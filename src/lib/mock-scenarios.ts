@@ -1,4 +1,4 @@
-import { ASSISTANT } from "./knowledge";
+import { GREETING } from "./knowledge";
 import type { ConversationEvent } from "./types";
 
 /**
@@ -28,9 +28,7 @@ const user = (content: string): ConversationEvent => ({
 
 const greeting: ConversationEvent[] = [
   { type: "stage", stage: "greeting" },
-  assistant(
-    `Merhaba Selin Hanım, ben ${ASSISTANT.name}, ekibin yapay zekâ asistanıyım. Yeni bir canlı yayın projesiyle ilgili kısa bir tanışma için ulaşıyorum. Şu an 5 dakikanız var mı?`,
-  ),
+  assistant(GREETING),
 ];
 
 const pitch: ConversationEvent[] = [
