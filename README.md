@@ -2,16 +2,18 @@
 
 İçerik üreticileriyle ilk tanışma görüşmesini yürüten, gerektiğinde insan yöneticiye devreden bir AI asistan prototipi.
 
-> **Durum:** Mock UI aşaması. Görüşmeler şu an hazır senaryolardan oynatılıyor, LLM entegrasyonu henüz yok.
-
 ## Çalıştırma
 
 ```bash
 pnpm install
+cp .env.example .env.local   # ANTHROPIC_API_KEY değerini doldur
 pnpm dev
 ```
 
-[http://localhost:3000](http://localhost:3000) adresini aç, bir senaryo seç ve "İleri" ile görüşmeyi adım adım oynat.
+[http://localhost:3000](http://localhost:3000) adresini aç.
+
+- **Canlı mod:** Asistanla gerçek zamanlı görüşme (Claude API).
+- **Senaryo modu:** Hazır senaryoları "İleri" ile adım adım oynatır; API anahtarı gerektirmez.
 
 ## Ekran
 
@@ -27,31 +29,59 @@ pnpm dev
 | İlgilenmiyor | Sürecin kibarca kapatılması |
 | Zor sorular | AI olduğunu açıklama, ücret garantisi talebini ve bilinmeyen sözleşme koşullarını insana devretme |
 
-## Yapı
+## Yaklaşım
+
+### Akış kodda, konuşma modelde
+Model doğal konuşmayı yürütür; akışın kritik noktaları koda bağlıdır:
+
+- **Yapay zekâ olduğunu söylemesi:** Karşılama mesajı LLM'e üretilmez, sabittir. Asistan her görüşmede kendini yapay zekâ olarak tanıtır ve uygunluk sorar.
+- **Aşamalar:** Model aşama geçişlerini `set_stage` tool'u ile bildirir, operatör paneli bunu gösterir.
+- **Kapanış:** `end_conversation` çağrısı görüşmeyi kapatır ve özeti tetikler. İlgilenmeyen kişi için süreç ısrar edilmeden kapanır.
+
+### Bilgi sınırları
+Çalışma koşulları system prompt'a gömülü değildir. Asistan bilgiye yalnızca `lookup_info` tool'u ile ulaşır ([knowledge.ts](src/lib/knowledge.ts)). Bilgi tabanında olmayan bir konu `found: false` döner ve asistan tahmin yürütmek yerine bilmediğini söyleyip konuyu devreder. Sözleşme ve münhasırlık bu davranışı göstermek için bilerek tanımsız bırakıldı.
+
+### İnsana devir
+`escalate_to_human(reason, urgency)` şu durumlarda çağrılır: somut ücret veya garanti talebi, sözleşme ya da bilgi tabanında olmayan önemli sorular, insanla konuşma isteği, şikâyet. Devirler operatör panelinde aciliyetleriyle listelenir ve özetin "İnsan yönetici gerekli mi?" bölümüne taşınır.
+
+### Görüşme sonu özeti
+Görüşme kapandığında transkript, Zod şemasıyla structured output alan ayrı bir istekle özetlenir. İlgi durumu yeniden tahmin edilmez; asistanın `end_conversation` ile verdiği karar kullanılır.
+
+## Mimari
 
 ```
 src/
-├── app/                      Next.js App Router
-├── components/
-│   ├── chat/                 Header, mesaj listesi, composer
-│   ├── operator/             Operatör paneli ve bölümleri
-│   ├── scenario-bar.tsx
-│   └── conversation-workspace.tsx
+├── app/api/chat/route.ts     POST → NDJSON event stream
+├── server/assistant/
+│   ├── config.ts             Model, effort ve limitler
+│   ├── system-prompt.ts      Sabit system prompt
+│   ├── tools.ts              Strict tool şemaları
+│   ├── execute-tool.ts       Tool'ları çalıştırır, UI event'lerine çevirir
+│   ├── run-turn.ts           Streaming tool döngüsü
+│   └── summarize.ts          Structured output özet
 ├── hooks/
-│   └── use-scenario-player.ts
+│   ├── use-assistant-chat.ts Canlı mod
+│   └── use-scenario-player.ts Senaryo modu
+├── components/               Chat, operatör paneli, toolbar
 └── lib/
     ├── types.ts              Domain tipleri ve konuşma event'leri
-    ├── knowledge.ts          Temsili çalışma koşulları (bilgi tabanı)
     ├── conversation-reducer.ts
+    ├── chat-protocol.ts      API sözleşmesi
+    ├── knowledge.ts          Bilgi tabanı ve sabit karşılama
     └── mock-scenarios.ts
 ```
 
-Konuşma durumu event tabanlı bir reducer ile yönetiliyor (`message`, `stage`, `tool_call`, `knowledge`, `escalation`, `summary`). Mock senaryolar bugün bu event'leri üretiyor. İleride LLM stream'i de aynı event'leri üreteceği için UI değişmeden kalacak.
+- **Tek event modeli:** Konuşma durumu event tabanlı bir reducer ile yönetilir (`message`, `assistant_delta`, `stage`, `tool_call`, `knowledge`, `escalation`, `summary`). Canlı API ve hazır senaryolar aynı event'leri ürettiği için UI veri kaynağından bağımsızdır.
+- **Stateless sunucu:** API'nin ham mesaj geçmişini client tutar ve her turda geri gönderir. Geçmiş yalnızca sona ekleme ile büyür.
+- **Tool döngüsü sunucuda:** Model tool çağırdıkça tool'lar sunucuda çalışır, sonuçlar modele geri verilir, metin kelime kelime stream edilir.
+- **Prompt caching:** Sabit system prompt, tool tanımları ve karşılama mesajı her istekte aynı olduğu için cache'lenir.
+- **Model:** `claude-haiku-5-5` (hız ve maliyet için). Model [config.ts](src/server/assistant/config.ts) içinde tek bir sabittir.
 
 ## Yol haritası
 
 - [x] Mock UI ve senaryolar
-- [ ] `/api/chat` route'u, system prompt ve tool calling ile LLM entegrasyonu
-- [ ] Structured output ile görüşme sonu özeti
+- [x] `/api/chat` route'u, system prompt ve tool calling ile LLM entegrasyonu
+- [x] Structured output ile görüşme sonu özeti
+- [ ] Opus ile kural takibi karşılaştırması
 - [ ] Web Speech API ile sesli mod
 - [ ] Deploy
