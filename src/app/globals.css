@@ -7,9 +7,9 @@
   --surface-muted: #f4f4f5;
   --border: #e4e4e7;
   --muted: #71717a;
-  --accent: #4f46e5;
-  --accent-soft: #eef2ff;
-  --accent-foreground: #3730a3;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --accent-foreground: #1e40af;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,9 +20,9 @@
     --surface-muted: #27272a;
     --border: #2e2e33;
     --muted: #a1a1aa;
-    --accent: #818cf8;
-    --accent-soft: #1e1b4b;
-    --accent-foreground: #c7d2fe;
+    --accent: #3b82f6;
+    --accent-soft: #172554;
+    --accent-foreground: #bfdbfe;
   }
 }
 
