@@ -18,15 +18,18 @@ const STATUS_STYLE: Record<ConversationStatus, string> = {
 interface ChatHeaderProps {
   status: ConversationStatus;
   isPanelOpen: boolean;
+  isMobilePanelOpen: boolean;
   onTogglePanel: () => void;
 }
 
 export function ChatHeader({
   status,
   isPanelOpen,
+  isMobilePanelOpen,
   onTogglePanel,
 }: ChatHeaderProps) {
-  const ToggleIcon = isPanelOpen ? PanelRightClose : PanelRightOpen;
+  const DesktopIcon = isPanelOpen ? PanelRightClose : PanelRightOpen;
+  const MobileIcon = isMobilePanelOpen ? PanelRightClose : PanelRightOpen;
 
   return (
     <header className="flex items-center gap-3 border-b border-border px-4 py-3">
@@ -53,11 +56,12 @@ export function ChatHeader({
       <button
         type="button"
         onClick={onTogglePanel}
-        aria-label={isPanelOpen ? "Operatör panelini kapat" : "Operatör panelini aç"}
-        title={isPanelOpen ? "Operatör panelini kapat" : "Operatör panelini aç"}
+        aria-label="Operatör panelini aç/kapat"
+        title="Operatör paneli"
         className="flex size-9 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-muted hover:text-foreground"
       >
-        <ToggleIcon className="size-4" aria-hidden />
+        <DesktopIcon className="hidden size-4 lg:block" aria-hidden />
+        <MobileIcon className="size-4 lg:hidden" aria-hidden />
       </button>
     </header>
   );
