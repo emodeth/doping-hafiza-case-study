@@ -4,6 +4,7 @@ import type { ChatStreamChunk } from "@/lib/chat-protocol";
 import { GREETING } from "@/lib/knowledge";
 import { anthropic, EFFORT, MAX_TOOL_ITERATIONS, MODEL } from "./config";
 import { executeTool } from "./execute-tool";
+import { summarizeConversation } from "./summarize";
 import { SYSTEM_PROMPT } from "./system-prompt";
 import { TOOLS } from "./tools";
 
@@ -34,6 +35,7 @@ export async function* runAssistantTurn(
 ): AsyncGenerator<ChatStreamChunk> {
   const newMessages: Anthropic.MessageParam[] = [{ role: "user", content: userMessage }];
   let hasText = false;
+  let conversationEnded = false;
 
   for (let iteration = 0; iteration < MAX_TOOL_ITERATIONS; iteration++) {
     const stream = anthropic.messages.stream(
@@ -89,6 +91,7 @@ export async function* runAssistantTurn(
     for (const toolUse of toolUses) {
       const execution = executeTool(toolUse.name, toolUse.input);
       for (const e of execution.events) yield event(e);
+      if (execution.endsConversation) conversationEnded = true;
       toolResults.push({
         type: "tool_result",
         tool_use_id: toolUse.id,
@@ -100,5 +103,23 @@ export async function* runAssistantTurn(
   }
 
   yield event({ type: "assistant_done" });
+
+  if (conversationEnded) {
+    // Özet başarısız olsa bile bu turun geçmişi client'a ulaşmalı.
+    let summary = null;
+    try {
+      summary = await summarizeConversation(
+        [...CONVERSATION_PREFIX, ...history, ...newMessages],
+        signal,
+      );
+    } catch (error) {
+      if (signal?.aborted) throw error;
+      console.error("[assistant] summary failed", error);
+    }
+    yield summary
+      ? event({ type: "summary", summary })
+      : { kind: "error", message: "Görüşme özeti oluşturulamadı." };
+  }
+
   yield { kind: "history", messages: newMessages };
 }
