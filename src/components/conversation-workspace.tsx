@@ -1,17 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { useAssistantChat } from "@/hooks/use-assistant-chat";
 import { useScenarioPlayer } from "@/hooks/use-scenario-player";
-import { ChatComposer } from "./chat/chat-composer";
+import { LiveComposer, ScenarioComposer } from "./chat/chat-composer";
 import { ChatHeader } from "./chat/chat-header";
 import { MessageList } from "./chat/message-list";
+import { ConversationToolbar, type ConversationMode } from "./conversation-toolbar";
 import { OperatorSidebar } from "./operator/operator-sidebar";
-import { ScenarioBar } from "./scenario-bar";
 
 const DESKTOP_QUERY = "(min-width: 1024px)";
 
 export function ConversationWorkspace() {
+  const [mode, setMode] = useState<ConversationMode>("live");
+  const live = useAssistantChat();
   const player = useScenarioPlayer();
+
+  const state = mode === "live" ? live.state : player.state;
+  const lastMessage = live.state.messages.at(-1);
+  const isThinking =
+    mode === "live" && live.isStreaming && !(lastMessage?.role === "assistant" && lastMessage.pending);
 
   // Masaüstü ve mobil için ayrı state: masaüstünde varsayılan açık,
   // mobilde chat'i kapatmaması için varsayılan kapalı.
@@ -34,28 +42,45 @@ export function ConversationWorkspace() {
     <div className="flex h-dvh overflow-hidden bg-background">
       <main className="flex min-w-0 flex-1 flex-col bg-surface">
         <ChatHeader
-          status={player.state.status}
+          status={state.status}
           isPanelOpen={isPanelOpen}
           isMobilePanelOpen={isMobilePanelOpen}
           onTogglePanel={togglePanel}
         />
-        <ScenarioBar
+        <ConversationToolbar
+          mode={mode}
+          onModeChange={setMode}
+          onRestart={live.restart}
           scenarios={player.scenarios}
-          activeId={player.scenario.id}
+          activeScenarioId={player.scenario.id}
           stepIndex={player.stepIndex}
           totalSteps={player.totalSteps}
-          onSelect={player.selectScenario}
+          onSelectScenario={player.selectScenario}
         />
-        <MessageList messages={player.state.messages} />
-        <ChatComposer
-          isFinished={player.isFinished}
-          onNext={player.next}
-          onReset={player.reset}
+        <MessageList
+          key={mode}
+          messages={state.messages}
+          isThinking={isThinking}
+          error={mode === "live" ? live.error : null}
         />
+        {mode === "live" ? (
+          <LiveComposer
+            isStreaming={live.isStreaming}
+            isClosed={live.state.status === "closed"}
+            onSend={live.send}
+            onRestart={live.restart}
+          />
+        ) : (
+          <ScenarioComposer
+            isFinished={player.isFinished}
+            onNext={player.next}
+            onReset={player.reset}
+          />
+        )}
       </main>
 
       <OperatorSidebar
-        state={player.state}
+        state={state}
         isOpen={isPanelOpen}
         isMobileOpen={isMobilePanelOpen}
         onClose={closePanel}
