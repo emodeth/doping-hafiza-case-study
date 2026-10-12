@@ -230,7 +230,7 @@ export const SCENARIOS: Scenario[] = [
           result: "accepted",
         },
         { type: "stage", stage: "closed" },
-        { type: "tool_call", name: "end_conversation", args: { outcome: "interested" } },
+        { type: "tool_call", name: "end_conversation", args: { outcome: "maybe" } },
         assistant(
           "Harika, Çarşamba 15:00. Tüm sorularınızı yöneticimize ilettim. Vakit ayırdığınız için teşekkürler!",
         ),
