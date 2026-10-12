@@ -1,4 +1,4 @@
-import { PanelRightClose, PanelRightOpen, RotateCcw, Volume2, VolumeX } from "lucide-react";
+import { PanelRightClose, PanelRightOpen, RotateCcw } from "lucide-react";
 import type { Scenario } from "@/lib/mock-scenarios";
 import type { ConversationStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -35,8 +35,6 @@ interface ConversationToolbarProps {
   isPanelOpen: boolean;
   isMobilePanelOpen: boolean;
   onTogglePanel: () => void;
-  /** Sesli yanıt kontrolü; tarayıcı seslendirmeyi desteklemiyorsa verilmez */
-  voice?: { enabled: boolean; isSpeaking: boolean; onToggle: () => void };
 }
 
 export function ConversationToolbar({
@@ -52,7 +50,6 @@ export function ConversationToolbar({
   isPanelOpen,
   isMobilePanelOpen,
   onTogglePanel,
-  voice,
 }: ConversationToolbarProps) {
   const DesktopIcon = isPanelOpen ? PanelRightClose : PanelRightOpen;
   const MobileIcon = isMobilePanelOpen ? PanelRightClose : PanelRightOpen;
@@ -125,28 +122,6 @@ export function ConversationToolbar({
           </>
         )}
       </div>
-
-      {voice && (
-        <button
-          type="button"
-          onClick={voice.onToggle}
-          aria-pressed={voice.enabled}
-          title={voice.enabled ? "Sesli yanıtı kapat" : "Asistanın cevaplarını sesli oku"}
-          className={cn(
-            "flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 text-xs transition-colors",
-            voice.enabled
-              ? "bg-accent-soft text-accent-foreground"
-              : "text-muted hover:bg-surface-muted hover:text-foreground",
-          )}
-        >
-          {voice.enabled ? (
-            <Volume2 className={cn("size-3.5", voice.isSpeaking && "animate-pulse")} aria-hidden />
-          ) : (
-            <VolumeX className="size-3.5" aria-hidden />
-          )}
-          <span className="hidden sm:inline">Sesli yanıt</span>
-        </button>
-      )}
 
       <span
         className={cn("shrink-0 rounded-md px-2 py-1 text-xs font-medium", STATUS_STYLE[status])}

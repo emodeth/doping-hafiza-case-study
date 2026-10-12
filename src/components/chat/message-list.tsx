@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Info, MessageCircle, TriangleAlert } from "lucide-react";
+import { MessageCircle, TriangleAlert } from "lucide-react";
 import type { ChatMessage } from "@/lib/types";
 import { MessageBubble } from "./message-bubble";
 
@@ -10,8 +10,6 @@ interface MessageListProps {
   /** Asistan cevabı bekleniyor ama henüz metin gelmedi */
   isThinking?: boolean;
   error?: string | null;
-  /** Hata olmayan bilgilendirme (ör. Türkçe ses bulunamadı) */
-  notice?: string | null;
 }
 
 function TypingIndicator() {
@@ -30,7 +28,7 @@ function TypingIndicator() {
   );
 }
 
-export function MessageList({ messages, isThinking, error, notice }: MessageListProps) {
+export function MessageList({ messages, isThinking, error }: MessageListProps) {
   const endRef = useRef<HTMLDivElement>(null);
   const lastContentLength = messages.at(-1)?.content.length ?? 0;
 
@@ -57,12 +55,6 @@ export function MessageList({ messages, isThinking, error, notice }: MessageList
           <MessageBubble key={message.id} message={message} />
         ))}
         {isThinking && <TypingIndicator />}
-        {notice && (
-          <div className="flex items-center gap-2 self-center rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-950 dark:text-amber-300">
-            <Info className="size-3.5 shrink-0" aria-hidden />
-            {notice}
-          </div>
-        )}
         {error && (
           <div className="flex items-center gap-2 self-center rounded-md bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-950 dark:text-red-300">
             <TriangleAlert className="size-3.5 shrink-0" aria-hidden />

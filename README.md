@@ -12,7 +12,7 @@ pnpm dev
 
 [http://localhost:3000](http://localhost:3000) adresini aç.
 
-- **Canlı mod:** Asistanla gerçek zamanlı görüşme (Claude API). Mikrofonu basılı tutarak sesli konuşabilir, "Sesli yanıt" ile cevapları dinleyebilirsin (Chrome veya Edge; en doğal Türkçe ses Edge'de).
+- **Canlı mod:** Asistanla gerçek zamanlı görüşme (Claude API). Mesajını yazabilir veya mikrofonu basılı tutarak sesli girebilirsin (Chrome veya Edge).
 - **Senaryo modu:** Hazır senaryoları "İleri" ile adım adım oynatır; API anahtarı gerektirmez.
 
 ## Ekran
@@ -76,7 +76,7 @@ src/
 - **Tool döngüsü sunucuda:** Model tool çağırdıkça tool'lar sunucuda çalışır, sonuçlar modele geri verilir, metin kelime kelime stream edilir.
 - **Prompt caching:** Sabit system prompt, tool tanımları ve karşılama mesajı her istekte aynı olduğu için cache'lenir.
 - **Model:** `claude-haiku-5-5` (hız ve maliyet için). Model [config.ts](src/server/assistant/config.ts) içinde tek bir sabittir.
-- **Ses:** Tarayıcının Web Speech API'si kullanılır; ek servis veya API anahtarı gerekmez. Konuşma tanıma bas-konuş şeklinde çalışır, cevaplar cümle cümle seslendirilir. Ses katmanı yalnızca metin girişi ve çıkışının yerini aldığı için asistan mantığı metin ve ses modunda aynıdır. Gerçek bir telefon ürününde bu katman Twilio gibi bir telefon altyapısı ve sunucu tarafı STT/TTS ile değiştirilir.
+- **Sesli giriş:** Tarayıcının Web Speech API'si ile bas-konuş konuşma tanıma; ek servis veya API anahtarı gerekmez. Tanınan metin, yazılmış bir mesajla aynı yoldan gönderilir, bu yüzden asistan mantığı değişmez.
 
 ## Yol haritası
 
@@ -84,5 +84,5 @@ src/
 - [x] `/api/chat` route'u, system prompt ve tool calling ile LLM entegrasyonu
 - [x] Structured output ile görüşme sonu özeti
 - [ ] Opus ile kural takibi karşılaştırması
-- [x] Web Speech API ile sesli mod
+- [x] Web Speech API ile sesli giriş
 - [ ] Deploy
