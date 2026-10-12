@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useAssistantChat } from "@/hooks/use-assistant-chat";
 import { useScenarioPlayer } from "@/hooks/use-scenario-player";
 import { LiveComposer, ScenarioComposer } from "./chat/chat-composer";
-import { ChatHeader } from "./chat/chat-header";
 import { MessageList } from "./chat/message-list";
 import { ConversationToolbar, type ConversationMode } from "./conversation-toolbar";
 import { OperatorSidebar } from "./operator/operator-sidebar";
@@ -41,21 +40,19 @@ export function ConversationWorkspace() {
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
       <main className="flex min-w-0 flex-1 flex-col bg-surface">
-        <ChatHeader
-          status={state.status}
-          isPanelOpen={isPanelOpen}
-          isMobilePanelOpen={isMobilePanelOpen}
-          onTogglePanel={togglePanel}
-        />
         <ConversationToolbar
           mode={mode}
           onModeChange={setMode}
+          status={state.status}
           onRestart={live.restart}
           scenarios={player.scenarios}
           activeScenarioId={player.scenario.id}
           stepIndex={player.stepIndex}
           totalSteps={player.totalSteps}
           onSelectScenario={player.selectScenario}
+          isPanelOpen={isPanelOpen}
+          isMobilePanelOpen={isMobilePanelOpen}
+          onTogglePanel={togglePanel}
         />
         <MessageList
           key={mode}
