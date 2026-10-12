@@ -2,6 +2,12 @@
 
 İçerik üreticileriyle ilk tanışma görüşmesini yürüten, gerektiğinde insan yöneticiye devreden bir AI asistan prototipi.
 
+## Demo
+
+[![Demo videosu](https://img.youtube.com/vi/n46i2cdxc10/maxresdefault.jpg)](https://youtu.be/n46i2cdxc10)
+
+▶️ [Demo videosunu YouTube'da izle](https://youtu.be/n46i2cdxc10)
+
 ## Çalıştırma
 
 ```bash
@@ -20,6 +26,14 @@ pnpm dev
 - **Chat:** Asistanla içerik üreticisi arasındaki görüşme.
 - **Operatör paneli:** Sağdaki, açılıp kapanabilen sidebar. Konuşmanın aşamasını, bilgi tabanından hangi bilgilerin kullanıldığını (bulunamayanlar işaretli), tool çağrılarını, insana devirleri ve görüşme sonu özetini gösterir.
 
+| Sabit karşılama | Görüşme sürerken |
+|---|---|
+| ![Karşılama mesajı](docs/screenshots/canli-karsilama.png) | ![Canlı görüşme](docs/screenshots/canli-gorusme.png) |
+| **Görüşme kapandı (panel gizli)** | **Görüşme kapandı (özetli panel)** |
+| ![Panel kapalı](docs/screenshots/canli-panel-kapali.png) | ![Görüşme özeti](docs/screenshots/canli-ozet.png) |
+
+Asistan kendini her zaman yapay zekâ olarak tanıtır, ücret sorusunda rakam vermeden konuyu yöneticiye taşır ve ilgi gösteren kişiyle yönetici görüşmesini planlar. Görüşme kapanınca panelde ilgi durumu, sorulan sorular, sonraki adım ve insan yönetici gereksinimi özetlenir.
+
 ### Senaryolar
 
 | Senaryo | Gösterdiği davranış |
@@ -28,6 +42,10 @@ pnpm dev
 | Şu an meşgul | Geri arama planlama |
 | İlgilenmiyor | Sürecin kibarca kapatılması |
 | Zor sorular | AI olduğunu açıklama, ücret garantisi talebini ve bilinmeyen sözleşme koşullarını insana devretme |
+
+![Zor sorular senaryosu](docs/screenshots/senaryo-zor-sorular.png)
+
+*Zor sorular senaryosu: `contract` bilgisi bilgi tabanında bulunamadığı için işaretli; ücret garantisi (orta) ve sözleşme sorusu (düşük) aciliyetle insana devredilmiş, görüşme "Kararsız" olarak kapanmış.*
 
 ## Yaklaşım
 
