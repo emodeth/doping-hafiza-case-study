@@ -2,12 +2,14 @@ import "server-only";
 import type Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
-import type { ConversationSummary } from "@/lib/types";
+import type { ConversationSummary, InterestLevel } from "@/lib/types";
 import { anthropic, EFFORT, MODEL } from "./config";
-import { OUTCOME_VALUES } from "./tools";
 
+/**
+ * İlgi durumu (interest) burada yeniden tahmin edilmez: asistanın
+ * end_conversation ile verdiği karar tek doğruluk kaynağıdır.
+ */
 const SummarySchema = z.object({
-  interest: z.enum(OUTCOME_VALUES),
   questionsAsked: z.array(z.string()),
   nextStep: z.string(),
   callbackTime: z.string().nullable(),
@@ -18,7 +20,6 @@ const SummarySchema = z.object({
 
 const SUMMARY_PROMPT = `Bir içerik üreticisiyle yapılan tanışma görüşmesinin transkriptini, insan yöneticinin hızlıca okuyacağı bir özete dönüştürüyorsun. Tüm alanları Türkçe doldur.
 
-- interest: interested (ilgileniyor), maybe (ilgili ama kararsız veya şartlı), callback (henüz konuşulamadı, sonra aranacak), not_interested (ilgilenmiyor).
 - questionsAsked: Kişinin sorduğu sorular, kendi ifadesine yakın şekilde. Soru sormadıysa boş liste.
 - nextStep: Kısa ifade (ör. "Yönetici görüşmesi", "Tekrar arama", "Süreç kapatıldı").
 - callbackTime: Kararlaştırılan saat, yoksa null.
@@ -52,6 +53,7 @@ export function toTranscript(messages: Anthropic.MessageParam[]): string {
 
 export async function summarizeConversation(
   messages: Anthropic.MessageParam[],
+  interest: InterestLevel,
   signal?: AbortSignal,
 ): Promise<ConversationSummary | null> {
   const response = await anthropic.messages.parse(
@@ -68,5 +70,5 @@ export async function summarizeConversation(
   if (response.stop_reason === "refusal" || !response.parsed_output) return null;
 
   const { callbackTime, ...rest } = response.parsed_output;
-  return { ...rest, callbackTime: callbackTime ?? undefined };
+  return { ...rest, interest, callbackTime: callbackTime ?? undefined };
 }

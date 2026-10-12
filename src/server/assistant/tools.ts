@@ -108,7 +108,12 @@ export const TOOLS: Anthropic.Tool[] = [
     input_schema: {
       type: "object",
       properties: {
-        outcome: { type: "string", enum: [...OUTCOME_VALUES] },
+        outcome: {
+          type: "string",
+          enum: [...OUTCOME_VALUES],
+          description:
+            "interested: ilgili ve yönetici görüşmesi planlandı. maybe: ilgili ama şartlı veya kararsız (ör. ücret/sözleşme netleşmeden karar vermeyecek). callback: proje henüz konuşulamadı, sadece geri arama planlandı. not_interested: ilgilenmiyor.",
+        },
         callback_time: {
           type: ["string", "null"],
           description: "Kararlaştırılan görüşme veya geri arama saati, yoksa null.",

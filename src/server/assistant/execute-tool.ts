@@ -1,6 +1,6 @@
 import "server-only";
 import { lookupKnowledge } from "@/lib/knowledge";
-import type { ConversationEvent } from "@/lib/types";
+import type { ConversationEvent, InterestLevel } from "@/lib/types";
 import { isAssistantTool, toolInputSchemas } from "./tools";
 
 /** Gerçek takvim bağlantısı yerine temsili saatler. */
@@ -12,8 +12,8 @@ export interface ToolExecution {
   isError?: boolean;
   /** Operatör paneline gönderilecek event'ler */
   events: ConversationEvent[];
-  /** end_conversation çağrıldığında görüşme kapanır */
-  endsConversation?: boolean;
+  /** end_conversation çağrıldığında asistanın verdiği görüşme sonucu */
+  outcome?: InterestLevel;
 }
 
 function error(message: string): ToolExecution {
@@ -103,7 +103,7 @@ export function executeTool(name: string, rawInput: unknown): ToolExecution {
           },
           { type: "stage", stage: "closed" },
         ],
-        endsConversation: true,
+        outcome: input.data.outcome,
       };
     }
   }

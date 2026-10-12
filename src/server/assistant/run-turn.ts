@@ -2,6 +2,7 @@ import "server-only";
 import type Anthropic from "@anthropic-ai/sdk";
 import type { ChatStreamChunk } from "@/lib/chat-protocol";
 import { GREETING } from "@/lib/knowledge";
+import type { InterestLevel } from "@/lib/types";
 import { anthropic, EFFORT, MAX_TOOL_ITERATIONS, MODEL } from "./config";
 import { executeTool } from "./execute-tool";
 import { summarizeConversation } from "./summarize";
@@ -35,7 +36,10 @@ export async function* runAssistantTurn(
 ): AsyncGenerator<ChatStreamChunk> {
   const newMessages: Anthropic.MessageParam[] = [{ role: "user", content: userMessage }];
   let hasText = false;
-  let conversationEnded = false;
+  let outcome: InterestLevel | undefined;
+
+  // Kişinin ilk mesajı, sabit karşılamadaki uygunluk sorusunun cevabıdır.
+  if (history.length === 0) yield event({ type: "stage", stage: "availability" });
 
   for (let iteration = 0; iteration < MAX_TOOL_ITERATIONS; iteration++) {
     const stream = anthropic.messages.stream(
@@ -91,7 +95,7 @@ export async function* runAssistantTurn(
     for (const toolUse of toolUses) {
       const execution = executeTool(toolUse.name, toolUse.input);
       for (const e of execution.events) yield event(e);
-      if (execution.endsConversation) conversationEnded = true;
+      if (execution.outcome) outcome = execution.outcome;
       toolResults.push({
         type: "tool_result",
         tool_use_id: toolUse.id,
@@ -104,12 +108,13 @@ export async function* runAssistantTurn(
 
   yield event({ type: "assistant_done" });
 
-  if (conversationEnded) {
+  if (outcome) {
     // Özet başarısız olsa bile bu turun geçmişi client'a ulaşmalı.
     let summary = null;
     try {
       summary = await summarizeConversation(
         [...CONVERSATION_PREFIX, ...history, ...newMessages],
+        outcome,
         signal,
       );
     } catch (error) {
