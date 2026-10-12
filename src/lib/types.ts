@@ -21,6 +21,8 @@ export interface ChatMessage {
   id: string;
   role: MessageRole;
   content: string;
+  /** Asistan mesajı hâlâ stream ediliyorsa true */
+  pending?: boolean;
 }
 
 export type ToolName =
@@ -72,6 +74,8 @@ export interface ConversationSummary {
  */
 export type ConversationEvent =
   | { type: "message"; role: MessageRole; content: string }
+  | { type: "assistant_delta"; text: string }
+  | { type: "assistant_done" }
   | { type: "stage"; stage: ConversationStage }
   | { type: "tool_call"; name: ToolName; args: Record<string, unknown>; result?: string }
   | { type: "knowledge"; topic: string; found: boolean }

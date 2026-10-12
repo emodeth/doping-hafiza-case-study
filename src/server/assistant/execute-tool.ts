@@ -91,7 +91,8 @@ export function executeTool(name: string, rawInput: unknown): ToolExecution {
       const input = toolInputSchemas.end_conversation.safeParse(rawInput);
       if (!input.success) return error("Geçersiz girdi");
       return {
-        result: "Görüşme kapatıldı. Kısa bir veda cümlesi yaz.",
+        result:
+          "Görüşme kapatıldı. Henüz veda etmediysen kısa bir veda cümlesi yaz; ettiysen başka bir şey yazma.",
         events: [
           {
             type: "tool_call",

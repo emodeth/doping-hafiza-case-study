@@ -31,6 +31,36 @@ function applyEvent(
         ],
       };
 
+    case "assistant_delta": {
+      const last = state.messages.at(-1);
+      if (last?.role === "assistant" && last.pending) {
+        return {
+          ...state,
+          messages: [
+            ...state.messages.slice(0, -1),
+            { ...last, content: last.content + event.text },
+          ],
+        };
+      }
+      return {
+        ...state,
+        status: state.status === "idle" ? "active" : state.status,
+        messages: [
+          ...state.messages,
+          { id: createId("msg"), role: "assistant", content: event.text, pending: true },
+        ],
+      };
+    }
+
+    case "assistant_done": {
+      const last = state.messages.at(-1);
+      if (!last?.pending) return state;
+      return {
+        ...state,
+        messages: [...state.messages.slice(0, -1), { ...last, pending: false }],
+      };
+    }
+
     case "stage": {
       if (state.stage === event.stage) return state;
       const completedStages =
