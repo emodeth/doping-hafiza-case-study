@@ -54,8 +54,6 @@ export function ConversationWorkspace() {
           onRestart={live.restart}
           scenarios={player.scenarios}
           activeScenarioId={player.scenario.id}
-          stepIndex={player.stepIndex}
-          totalSteps={player.totalSteps}
           onSelectScenario={player.selectScenario}
           isPanelOpen={isPanelOpen}
           isMobilePanelOpen={isMobilePanelOpen}
@@ -92,6 +90,9 @@ export function ConversationWorkspace() {
 
       <OperatorSidebar
         state={state}
+        progress={
+          mode === "scenario" ? { current: player.stepIndex, total: player.totalSteps } : undefined
+        }
         isOpen={isPanelOpen}
         isMobileOpen={isMobilePanelOpen}
         onClose={closePanel}

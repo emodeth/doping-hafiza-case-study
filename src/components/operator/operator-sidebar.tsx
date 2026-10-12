@@ -6,7 +6,7 @@ import {
   Wrench,
   X,
 } from "lucide-react";
-import type { ConversationState } from "@/lib/types";
+import type { ConversationState, ConversationStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { EscalationList } from "./escalation-list";
 import { KnowledgeHits } from "./knowledge-hits";
@@ -15,8 +15,22 @@ import { StageTracker } from "./stage-tracker";
 import { SummaryCard } from "./summary-card";
 import { ToolCallLog } from "./tool-call-log";
 
+const STATUS_LABEL: Record<ConversationStatus, string> = {
+  idle: "Hazır",
+  active: "Görüşmede",
+  closed: "Kapandı",
+};
+
+const STATUS_STYLE: Record<ConversationStatus, string> = {
+  idle: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
+  active: "bg-accent-soft text-accent-foreground",
+  closed: "bg-surface-muted text-muted",
+};
+
 interface OperatorSidebarProps {
   state: ConversationState;
+  /** Senaryo modunda oynatılan adım / toplam adım */
+  progress?: { current: number; total: number };
   /** lg ve üzeri ekranlarda sidebar'ın açık olup olmadığı */
   isOpen: boolean;
   /** lg altı ekranlarda drawer'ın açık olup olmadığı */
@@ -24,11 +38,25 @@ interface OperatorSidebarProps {
   onClose: () => void;
 }
 
-function PanelContent({ state, onClose }: Pick<OperatorSidebarProps, "state" | "onClose">) {
+function PanelContent({
+  state,
+  progress,
+  onClose,
+}: Pick<OperatorSidebarProps, "state" | "progress" | "onClose">) {
   return (
     <div className="flex h-full w-[340px] max-w-[85vw] flex-col bg-surface">
-      <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <h2 className="text-sm font-medium">Operatör paneli</h2>
+      <div className="flex items-center gap-2 border-b border-border px-4 py-3">
+        <h2 className="mr-auto text-sm font-medium">Operatör paneli</h2>
+        {progress && (
+          <span className="font-mono text-xs text-muted">
+            {progress.current}/{progress.total}
+          </span>
+        )}
+        <span
+          className={cn("rounded-md px-2 py-0.5 text-xs font-medium", STATUS_STYLE[state.status])}
+        >
+          {STATUS_LABEL[state.status]}
+        </span>
         <button
           type="button"
           onClick={onClose}
@@ -60,7 +88,13 @@ function PanelContent({ state, onClose }: Pick<OperatorSidebarProps, "state" | "
   );
 }
 
-export function OperatorSidebar({ state, isOpen, isMobileOpen, onClose }: OperatorSidebarProps) {
+export function OperatorSidebar({
+  state,
+  progress,
+  isOpen,
+  isMobileOpen,
+  onClose,
+}: OperatorSidebarProps) {
   return (
     <>
       {/* Masaüstü: genişliği animasyonlu açılıp kapanan sidebar */}
@@ -73,7 +107,7 @@ export function OperatorSidebar({ state, isOpen, isMobileOpen, onClose }: Operat
           isOpen ? "w-[340px]" : "w-0 border-l-0",
         )}
       >
-        <PanelContent state={state} onClose={onClose} />
+        <PanelContent state={state} progress={progress} onClose={onClose} />
       </aside>
 
       {/* Mobil: sağdan açılan drawer */}
@@ -96,7 +130,7 @@ export function OperatorSidebar({ state, isOpen, isMobileOpen, onClose }: Operat
             isMobileOpen ? "translate-x-0" : "translate-x-full",
           )}
         >
-          <PanelContent state={state} onClose={onClose} />
+          <PanelContent state={state} progress={progress} onClose={onClose} />
         </aside>
       </div>
     </>

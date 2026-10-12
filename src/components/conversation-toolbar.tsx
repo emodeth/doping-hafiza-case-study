@@ -10,18 +10,6 @@ const MODES: { id: ConversationMode; label: string }[] = [
   { id: "scenario", label: "Senaryo" },
 ];
 
-const STATUS_LABEL: Record<ConversationStatus, string> = {
-  idle: "Hazır",
-  active: "Görüşmede",
-  closed: "Kapandı",
-};
-
-const STATUS_STYLE: Record<ConversationStatus, string> = {
-  idle: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
-  active: "bg-accent-soft text-accent-foreground",
-  closed: "bg-surface-muted text-muted",
-};
-
 interface ConversationToolbarProps {
   mode: ConversationMode;
   onModeChange: (mode: ConversationMode) => void;
@@ -29,8 +17,6 @@ interface ConversationToolbarProps {
   onRestart: () => void;
   scenarios: Scenario[];
   activeScenarioId: string;
-  stepIndex: number;
-  totalSteps: number;
   onSelectScenario: (id: string) => void;
   isPanelOpen: boolean;
   isMobilePanelOpen: boolean;
@@ -44,8 +30,6 @@ export function ConversationToolbar({
   onRestart,
   scenarios,
   activeScenarioId,
-  stepIndex,
-  totalSteps,
   onSelectScenario,
   isPanelOpen,
   isMobilePanelOpen,
@@ -101,9 +85,6 @@ export function ConversationToolbar({
                 {scenario.label}
               </button>
             ))}
-            <span className="ml-auto shrink-0 pl-2 font-mono text-xs text-muted">
-              {stepIndex}/{totalSteps}
-            </span>
           </>
         ) : (
           <>
@@ -122,12 +103,6 @@ export function ConversationToolbar({
           </>
         )}
       </div>
-
-      <span
-        className={cn("shrink-0 rounded-md px-2 py-1 text-xs font-medium", STATUS_STYLE[status])}
-      >
-        {STATUS_LABEL[status]}
-      </span>
 
       <button
         type="button"
