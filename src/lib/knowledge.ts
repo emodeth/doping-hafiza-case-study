@@ -7,22 +7,23 @@
  */
 
 export const ASSISTANT = {
-  name: "Lumi",
+  name: "Dopi",
   role: "Yapay zekâ asistanı",
+  teamName: "Doping Hafıza",
   projectName: "Canlı Yayın Projesi",
 } as const;
 
 /** Temsili görüşme yapılan içerik üreticisi. */
 export const CONTACT = {
-  addressAs: "Selin Hanım",
-  expertise: "fitness ve sağlıklı beslenme",
+  addressAs: "Emirhan Bey",
+  expertise: "yazılım geliştirme",
 } as const;
 
 /**
  * Karşılama mesajı LLM'e üretilmez, sabittir: asistanın kendini yapay zekâ
  * olarak tanıtması ve uygunluk sorması böylece her görüşmede garanti altına alınır.
  */
-export const GREETING = `Merhaba ${CONTACT.addressAs}, ben ${ASSISTANT.name}, ekibin yapay zekâ asistanıyım. Yeni bir canlı yayın projesiyle ilgili kısa bir tanışma için ulaşıyorum. Şu an 5 dakikanız var mı?`;
+export const GREETING = `Merhaba ${CONTACT.addressAs}, ben ${ASSISTANT.name}, ${ASSISTANT.teamName} ekibinin yapay zekâ asistanıyım. Yeni bir canlı yayın projesiyle ilgili kısa bir tanışma için ulaşıyorum. Şu an 5 dakikanız var mı?`;
 
 export interface KnowledgeEntry {
   topic: string;

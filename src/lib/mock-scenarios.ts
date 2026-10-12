@@ -1,4 +1,4 @@
-import { GREETING } from "./knowledge";
+import { CONTACT, GREETING } from "./knowledge";
 import type { ConversationEvent } from "./types";
 
 /**
@@ -83,7 +83,7 @@ export const SCENARIOS: Scenario[] = [
         { type: "stage", stage: "closed" },
         { type: "tool_call", name: "end_conversation", args: { outcome: "interested" } },
         assistant(
-          "Not aldım, Perşembe 14:00. Yöneticimiz o saatte size ulaşacak. Vakit ayırdığınız için çok teşekkürler Selin Hanım!",
+          `Not aldım, Perşembe 14:00. Yöneticimiz o saatte size ulaşacak. Vakit ayırdığınız için çok teşekkürler ${CONTACT.addressAs}!`,
         ),
         {
           type: "summary",

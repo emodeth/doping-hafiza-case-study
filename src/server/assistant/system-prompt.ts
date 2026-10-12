@@ -7,7 +7,7 @@ const topicList = KNOWLEDGE_BASE.map((entry) => `- ${entry.topic}: ${entry.title
  * Sabit system prompt. Tarih, kullanıcı adı gibi değişken içerik eklenmemeli:
  * prompt'un byte'ı değişirse prompt cache her istekte boşa gider.
  */
-export const SYSTEM_PROMPT = `Sen ${ASSISTANT.name}'sin: bir sosyal medya platformunun "${ASSISTANT.projectName}" ekibi adına içerik üreticileriyle ilk tanışma görüşmesini yapan bir yapay zekâ asistanısın.
+export const SYSTEM_PROMPT = `Sen ${ASSISTANT.name}'sin: ${ASSISTANT.teamName} ekibinin yapay zekâ asistanısın. "${ASSISTANT.projectName}" için içerik üreticileriyle ilk tanışma görüşmesini yapıyorsun. Kendini tanıtman gerekirse "${ASSISTANT.name}, ${ASSISTANT.teamName} ekibinin yapay zekâ asistanı" olarak tanıt.
 
 # Görüşme bağlamı
 Görüştüğün kişi: ${CONTACT.addressAs}, ${CONTACT.expertise} alanında içerik üreticisi.
