@@ -21,7 +21,6 @@ export interface ChatMessage {
   id: string;
   role: MessageRole;
   content: string;
-  /** Asistan mesajı hâlâ stream ediliyorsa true */
   pending?: boolean;
 }
 
@@ -67,11 +66,6 @@ export interface ConversationSummary {
   notes: string;
 }
 
-/**
- * Asistanın bir turunda üretilebilecek yan etkiler.
- * Mock senaryolar ve ileride gerçek LLM stream'i aynı event'leri üretir,
- * böylece UI hangi kaynaktan beslendiğini bilmek zorunda kalmaz.
- */
 export type ConversationEvent =
   | { type: "message"; role: MessageRole; content: string }
   | { type: "assistant_delta"; text: string }

@@ -17,14 +17,9 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 interface UseSpeechRecognitionOptions {
   lang?: string;
-  /** Dinleme bittiğinde tanınan metinle çağrılır (boşsa çağrılmaz) */
   onFinal: (transcript: string) => void;
 }
 
-/**
- * Bas-konuş için tarayıcı konuşma tanıma. start() ile dinlemeye başlar,
- * stop() ile bitirir; tanınan metin onFinal ile teslim edilir.
- */
 export function useSpeechRecognition({ lang = "tr-TR", onFinal }: UseSpeechRecognitionOptions) {
   const isSupported = useBrowserSupport(() => Boolean(getRecognitionConstructor()));
   const [isListening, setIsListening] = useState(false);
@@ -33,7 +28,6 @@ export function useSpeechRecognition({ lang = "tr-TR", onFinal }: UseSpeechRecog
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const finalTextRef = useRef("");
-  // Tanıma oturumu boyunca en güncel callback'i kullanmak için ref'te tutulur.
   const onFinalRef = useRef(onFinal);
   useEffect(() => {
     onFinalRef.current = onFinal;
@@ -60,7 +54,6 @@ export function useSpeechRecognition({ lang = "tr-TR", onFinal }: UseSpeechRecog
     };
 
     recognition.onerror = (event) => {
-      // "no-speech" ve "aborted" kullanıcı hatası değil, sessizce geçilir.
       if (event.error !== "no-speech" && event.error !== "aborted") {
         setError(ERROR_MESSAGES[event.error] ?? "Ses tanınamadı.");
       }
@@ -82,7 +75,6 @@ export function useSpeechRecognition({ lang = "tr-TR", onFinal }: UseSpeechRecog
     setIsListening(true);
   }, [lang]);
 
-  /** Dinlemeyi bitirir; son sonuçlar geldikten sonra onend tetiklenir. */
   const stop = useCallback(() => recognitionRef.current?.stop(), []);
 
   return { isSupported, isListening, interimTranscript, error, start, stop };

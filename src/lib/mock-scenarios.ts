@@ -1,12 +1,6 @@
 import { CONTACT, GREETING } from "./knowledge";
 import type { ConversationEvent } from "./types";
 
-/**
- * Mock UI için hazır görüşme senaryoları.
- * Her adım, "İleri"ye bir kez basıldığında uygulanan event listesidir.
- * Gerçek LLM entegrasyonu gelene kadar akışı ve paneli göstermek için kullanılır.
- */
-
 export interface Scenario {
   id: string;
   label: string;

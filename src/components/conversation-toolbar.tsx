@@ -89,7 +89,6 @@ export function ConversationToolbar({
         ) : (
           <>
             <span className="shrink-0 text-xs text-muted">Asistanla gerçek zamanlı görüşme</span>
-            {/* Görüşme kapandığında yeniden başlatma butonu composer'da görünür. */}
             {status !== "closed" && (
               <button
                 type="button"

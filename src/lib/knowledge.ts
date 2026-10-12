@@ -1,11 +1,3 @@
-/**
- * Temsili çalışma koşulları. Asistan yalnızca buradaki bilgileri kullanabilir.
- *
- * Sözleşme süresi, münhasırlık, ekipman desteği, ödeme takvimi gibi konular
- * bilerek tanımsız bırakıldı: asistanın bilmediği bir konuda koşul uydurmadığını
- * ve konuyu insan yöneticiye devrettiğini göstermek için.
- */
-
 export const ASSISTANT = {
   name: "Dopi",
   role: "Yapay zekâ asistanı",
@@ -13,16 +5,11 @@ export const ASSISTANT = {
   projectName: "Canlı Yayın Projesi",
 } as const;
 
-/** Temsili görüşme yapılan içerik üreticisi. */
 export const CONTACT = {
   addressAs: "Emirhan Bey",
   expertise: "yazılım geliştirme",
 } as const;
 
-/**
- * Karşılama mesajı LLM'e üretilmez, sabittir: asistanın kendini yapay zekâ
- * olarak tanıtması ve uygunluk sorması böylece her görüşmede garanti altına alınır.
- */
 export const GREETING = `Merhaba ${CONTACT.addressAs}, ben ${ASSISTANT.name}, ${ASSISTANT.teamName} ekibinin yapay zekâ asistanıyım. Yeni bir canlı yayın projesiyle ilgili kısa bir tanışma için ulaşıyorum. Şu an 5 dakikanız var mı?`;
 
 export interface KnowledgeEntry {
@@ -31,6 +18,7 @@ export interface KnowledgeEntry {
   content: string;
 }
 
+// Sözleşme süresi, ödeme takvimi gibi konular bilerek yok: asistanın uydurmayıp yöneticiye devrettiğini göstermek için.
 export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
   {
     topic: "project",

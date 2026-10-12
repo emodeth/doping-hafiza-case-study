@@ -29,11 +29,8 @@ const STATUS_STYLE: Record<ConversationStatus, string> = {
 
 interface OperatorSidebarProps {
   state: ConversationState;
-  /** Senaryo modunda oynatılan adım / toplam adım */
   progress?: { current: number; total: number };
-  /** lg ve üzeri ekranlarda sidebar'ın açık olup olmadığı */
   isOpen: boolean;
-  /** lg altı ekranlarda drawer'ın açık olup olmadığı */
   isMobileOpen: boolean;
   onClose: () => void;
 }
@@ -97,7 +94,6 @@ export function OperatorSidebar({
 }: OperatorSidebarProps) {
   return (
     <>
-      {/* Masaüstü: genişliği animasyonlu açılıp kapanan sidebar */}
       <aside
         aria-label="Operatör paneli"
         aria-hidden={!isOpen}
@@ -110,7 +106,6 @@ export function OperatorSidebar({
         <PanelContent state={state} progress={progress} onClose={onClose} />
       </aside>
 
-      {/* Mobil: sağdan açılan drawer */}
       <div
         className={cn("fixed inset-0 z-40 lg:hidden", !isMobileOpen && "pointer-events-none")}
         aria-hidden={!isMobileOpen}

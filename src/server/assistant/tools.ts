@@ -2,16 +2,11 @@ import "server-only";
 import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 
-/**
- * Tool tanımları. strict: true ile model girdileri şemaya birebir uyar;
- * strict modda tüm alanlar required olmak zorunda olduğu için opsiyonel
- * alanlar null kabul eden tiplerle tanımlandı.
- */
-
 export const STAGE_VALUES = ["availability", "pitch", "qa", "scheduling", "closed"] as const;
 export const URGENCY_VALUES = ["low", "medium", "high"] as const;
 export const OUTCOME_VALUES = ["interested", "maybe", "callback", "not_interested"] as const;
 
+// strict modda tüm alanlar required olduğundan opsiyonel alanlar null kabul eder.
 export const toolInputSchemas = {
   set_stage: z.object({ stage: z.enum(STAGE_VALUES) }),
   lookup_info: z.object({ topic: z.string() }),

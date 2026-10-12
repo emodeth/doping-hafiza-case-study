@@ -1,8 +1,3 @@
-/**
- * Web Speech API konuşma tanıma tipleri. TypeScript'in DOM kütüphanesi
- * sonuç tiplerini içeriyor ama SpeechRecognition'ın kendisini içermiyor.
- */
-
 interface SpeechRecognitionEvent extends Event {
   readonly resultIndex: number;
   readonly results: SpeechRecognitionResultList;

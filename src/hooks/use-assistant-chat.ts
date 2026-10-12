@@ -45,7 +45,6 @@ export function useAssistantChat() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // API'nin ham mesaj geçmişi: UI'da gösterilmez, her turda sunucuya geri gönderilir.
   const historyRef = useRef<Anthropic.MessageParam[]>([]);
   const abortRef = useRef<AbortController | null>(null);
 

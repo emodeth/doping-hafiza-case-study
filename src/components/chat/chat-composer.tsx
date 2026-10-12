@@ -35,7 +35,6 @@ interface PushToTalkButtonProps extends SpeechInputControls {
   disabled: boolean;
 }
 
-/** Basılı tutunca dinler, bırakınca gönderir. Klavyede Space/Enter ile de çalışır. */
 function PushToTalkButton({ isSupported, isListening, disabled, onStart, onStop }: PushToTalkButtonProps) {
   const label = !isSupported
     ? "Tarayıcınız konuşma tanımayı desteklemiyor (Chrome veya Edge kullanın)"
@@ -144,7 +143,6 @@ interface ScenarioComposerProps {
   onReset: () => void;
 }
 
-/** Senaryo modunda mesajlar hazır senaryodan gelir, input salt okunurdur. */
 export function ScenarioComposer({ isFinished, onNext, onReset }: ScenarioComposerProps) {
   return (
     <ComposerShell>

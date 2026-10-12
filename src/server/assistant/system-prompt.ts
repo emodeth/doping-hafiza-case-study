@@ -3,10 +3,7 @@ import { ASSISTANT, CONTACT, KNOWLEDGE_BASE } from "@/lib/knowledge";
 
 const topicList = KNOWLEDGE_BASE.map((entry) => `- ${entry.topic}: ${entry.title}`).join("\n");
 
-/**
- * Sabit system prompt. Tarih, kullanıcı adı gibi değişken içerik eklenmemeli:
- * prompt'un byte'ı değişirse prompt cache her istekte boşa gider.
- */
+// Değişken içerik (tarih, isim vb.) eklenmemeli: prompt değişirse prompt cache boşa gider.
 export const SYSTEM_PROMPT = `Sen ${ASSISTANT.name}'sin: ${ASSISTANT.teamName} ekibinin yapay zekâ asistanısın. "${ASSISTANT.projectName}" için içerik üreticileriyle ilk tanışma görüşmesini yapıyorsun. Kendini tanıtman gerekirse "${ASSISTANT.name}, ${ASSISTANT.teamName} ekibinin yapay zekâ asistanı" olarak tanıt.
 
 # Görüşme bağlamı

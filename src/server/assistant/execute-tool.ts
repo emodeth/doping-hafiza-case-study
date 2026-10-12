@@ -3,16 +3,12 @@ import { lookupKnowledge } from "@/lib/knowledge";
 import type { ConversationEvent, InterestLevel } from "@/lib/types";
 import { isAssistantTool, toolInputSchemas } from "./tools";
 
-/** Gerçek takvim bağlantısı yerine temsili saatler. */
 const MOCK_CALLBACK_SLOTS = ["Yarın 11:00", "Yarın 16:00", "Perşembe 14:00"];
 
 export interface ToolExecution {
-  /** Modele tool_result olarak dönen içerik */
   result: string;
   isError?: boolean;
-  /** Operatör paneline gönderilecek event'ler */
   events: ConversationEvent[];
-  /** end_conversation çağrıldığında asistanın verdiği görüşme sonucu */
   outcome?: InterestLevel;
 }
 

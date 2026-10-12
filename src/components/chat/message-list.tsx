@@ -7,7 +7,6 @@ import { MessageBubble } from "./message-bubble";
 
 interface MessageListProps {
   messages: ChatMessage[];
-  /** Asistan cevabı bekleniyor ama henüz metin gelmedi */
   isThinking?: boolean;
   error?: string | null;
 }

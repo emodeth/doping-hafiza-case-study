@@ -9,10 +9,6 @@ import { summarizeConversation } from "./summarize";
 import { SYSTEM_PROMPT } from "./system-prompt";
 import { TOOLS } from "./tools";
 
-/**
- * API ilk mesajın user olmasını ister. Sabit karşılama mesajı her istekte
- * aynı şekilde geçmişin başına eklenir; bu sayede prompt cache de bozulmaz.
- */
 const CONVERSATION_PREFIX: Anthropic.MessageParam[] = [
   { role: "user", content: "(Görüşme başladı.)" },
   { role: "assistant", content: GREETING },
@@ -23,12 +19,6 @@ const event = (e: Extract<ChatStreamChunk, { kind: "event" }>["event"]): ChatStr
   event: e,
 });
 
-/**
- * Kullanıcının bir mesajına karşılık asistan turunu çalıştırır.
- * Model tool çağırdıkça tool'ları sunucuda çalıştırır, sonuçları geri verir ve
- * model metin cevabını bitirene kadar döngüye devam eder. Her adımı UI event'i
- * olarak yield eder.
- */
 export async function* runAssistantTurn(
   history: Anthropic.MessageParam[],
   userMessage: string,
@@ -38,7 +28,6 @@ export async function* runAssistantTurn(
   let hasText = false;
   let outcome: InterestLevel | undefined;
 
-  // Kişinin ilk mesajı, sabit karşılamadaki uygunluk sorusunun cevabıdır.
   if (history.length === 0) yield event({ type: "stage", stage: "availability" });
 
   for (let iteration = 0; iteration < MAX_TOOL_ITERATIONS; iteration++) {
@@ -55,7 +44,6 @@ export async function* runAssistantTurn(
       { signal },
     );
 
-    // Tool çağrısından önce ve sonra gelen metinler tek balonda birleşir.
     let needsSeparator = hasText;
     for await (const streamEvent of stream) {
       if (streamEvent.type === "content_block_delta" && streamEvent.delta.type === "text_delta") {
@@ -90,7 +78,6 @@ export async function* runAssistantTurn(
     );
     if (message.stop_reason !== "tool_use" || toolUses.length === 0) break;
 
-    // Tüm tool sonuçları tek bir user mesajında döner.
     const toolResults: Anthropic.ToolResultBlockParam[] = [];
     for (const toolUse of toolUses) {
       const execution = executeTool(toolUse.name, toolUse.input);
@@ -109,7 +96,6 @@ export async function* runAssistantTurn(
   yield event({ type: "assistant_done" });
 
   if (outcome) {
-    // Özet başarısız olsa bile bu turun geçmişi client'a ulaşmalı.
     let summary = null;
     try {
       summary = await summarizeConversation(

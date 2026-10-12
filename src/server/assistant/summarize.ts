@@ -5,10 +5,6 @@ import { z } from "zod";
 import type { ConversationSummary, InterestLevel } from "@/lib/types";
 import { anthropic, EFFORT, MODEL } from "./config";
 
-/**
- * İlgi durumu (interest) burada yeniden tahmin edilmez: asistanın
- * end_conversation ile verdiği karar tek doğruluk kaynağıdır.
- */
 const SummarySchema = z.object({
   questionsAsked: z.array(z.string()),
   nextStep: z.string(),
@@ -39,7 +35,6 @@ function blockToLine(role: Anthropic.MessageParam["role"], block: Anthropic.Cont
   }
 }
 
-/** API mesaj geçmişini okunabilir bir transkripte çevirir (tool sonuçları ve düşünme blokları hariç). */
 export function toTranscript(messages: Anthropic.MessageParam[]): string {
   return messages
     .flatMap((message) =>

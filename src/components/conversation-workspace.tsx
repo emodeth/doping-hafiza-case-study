@@ -27,8 +27,6 @@ export function ConversationWorkspace() {
     setMode(next);
   };
 
-  // Masaüstü ve mobil için ayrı state: masaüstünde varsayılan açık,
-  // mobilde chat'i kapatmaması için varsayılan kapalı.
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false);
 
