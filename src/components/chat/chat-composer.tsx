@@ -5,18 +5,27 @@ import { Mic, Play, RotateCcw, SendHorizontal } from "lucide-react";
 
 const MAX_LENGTH = 2000;
 
-function ComposerShell({ children }: { children: React.ReactNode }) {
+function ComposerShell({
+  showMic = true,
+  children,
+}: {
+  /** Görüşme kapandığında mikrofon gösterilmez */
+  showMic?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <div className="border-t border-border px-4 py-3">
       <div className="mx-auto flex max-w-3xl items-center gap-2">
-        <button
-          type="button"
-          aria-label="Sesli mod"
-          title="Sesli mod yakında"
-          className="flex size-10 shrink-0 items-center justify-center rounded-md border border-border text-muted transition-colors hover:bg-surface-muted hover:text-foreground"
-        >
-          <Mic className="size-4" aria-hidden />
-        </button>
+        {showMic && (
+          <button
+            type="button"
+            aria-label="Sesli mod"
+            title="Sesli mod yakında"
+            className="flex size-10 shrink-0 items-center justify-center rounded-md border border-border text-muted transition-colors hover:bg-surface-muted hover:text-foreground"
+          >
+            <Mic className="size-4" aria-hidden />
+          </button>
+        )}
         {children}
       </div>
     </div>
@@ -30,7 +39,7 @@ const secondaryButtonClassName =
   "flex h-10 shrink-0 items-center gap-2 rounded-md border border-border px-3 text-sm font-medium transition-colors hover:bg-surface-muted";
 
 const primaryButtonClassName =
-  "flex h-10 shrink-0 items-center gap-2 rounded-md bg-accent px-3 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 dark:text-zinc-950";
+  "flex h-10 shrink-0 items-center gap-2 rounded-md bg-accent px-3 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50";
 
 interface LiveComposerProps {
   isStreaming: boolean;
@@ -51,7 +60,7 @@ export function LiveComposer({ isStreaming, isClosed, onSend, onRestart }: LiveC
 
   if (isClosed) {
     return (
-      <ComposerShell>
+      <ComposerShell showMic={false}>
         <p className="flex-1 text-sm text-muted">Görüşme kapandı.</p>
         <button type="button" onClick={onRestart} className={secondaryButtonClassName}>
           <RotateCcw className="size-4" aria-hidden />
@@ -95,7 +104,7 @@ interface ScenarioComposerProps {
 /** Senaryo modunda mesajlar hazır senaryodan gelir, input salt okunurdur. */
 export function ScenarioComposer({ isFinished, onNext, onReset }: ScenarioComposerProps) {
   return (
-    <ComposerShell>
+    <ComposerShell showMic={!isFinished}>
       <input
         readOnly
         placeholder="Senaryo modunda mesajlar senaryodan gelir"
